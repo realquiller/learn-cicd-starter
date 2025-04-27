@@ -35,11 +35,12 @@ jobs:
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: Run migrations
-        run: goose turso $DATABASE_URL up sql/schema
-
       - name: 'Build and Push Docker image'
         run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/serene-exchange-458116-r4/notely-ar-repo/notely:latest .'
+
+      - name: Run migrations
+        run: goose turso $DATABASE_URL up
+        working-directory: sql/schema
 
       - name: Deploy to Cloud Run
         run: gcloud run deploy notely --image us-central1-docker.pkg.dev/serene-exchange-458116-r4/notely-ar-repo/notely:latest --region us-central1 --allow-unauthenticated --project serene-exchange-458116-r4 --max-instances=4
